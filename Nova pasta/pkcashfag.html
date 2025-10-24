@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram - @pkcashfag</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            color: #262626;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 935px;
+            margin: 0 auto;
+            padding: 30px 20px 0;
+        }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            margin-bottom: 44px;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #dbdbdb;
+            margin-right: 30px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .username-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .username {
+            font-size: 28px;
+            font-weight: 300;
+            margin: 0 20px 0 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .buttons {
+            display: flex;
+            align-items: center;
+        }
+        .button {
+            background-color: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 9px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .button.secondary {
+            background-color: transparent;
+            border: 1px solid #dbdbdb;
+            color: #262626;
+        }
+        .stats {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .stat {
+            margin-right: 40px;
+            font-size: 16px;
+        }
+        .stat strong {
+            font-weight: 600;
+        }
+        .name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .bio {
+            font-size: 14px;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+        .bio a {
+            color: #00376b;
+            text-decoration: none;
+        }
+        .highlights {
+            display: flex;
+            margin-bottom: 44px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .highlight-container {
+            text-align: center;
+            margin-right: 16px;
+        }
+        .highlight {
+            width: 77px;
+            height: 77px;
+            border-radius: 50%;
+            background-color: #dbdbdb;
+            overflow: hidden;
+            border: 1px solid #dbdbdb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .highlight img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .highlight-label {
+            font-size: 12px;
+            margin-top: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 77px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid #dbdbdb;
+            margin: 0 -20px 0;
+            position: sticky;
+            top: 0;
+            background-color: #fafafa;
+            z-index: 1;
+        }
+        .tab {
+            flex: 1;
+            max-width: 60px;
+            padding: 16px 0;
+            text-align: center;
+            color: #8e8e8e;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 1px;
+            background-color: #262626;
+        }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+        .post-thumbnail {
+            position: relative;
+            padding-top: 100%;
+            background-color: #dbdbdb;
+            cursor: pointer;
+        }
+        .post-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .post-thumbnail:hover .post-overlay {
+            opacity: 1;
+        }
+        .overlay-stats {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+        }
+        .overlay-stats span {
+            margin-left: 4px;
+            font-weight: 600;
+        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            display: flex;
+            max-width: 935px;
+            max-height: 80vh;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .modal-image {
+            flex: 0 0 60%;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-image img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        .modal-info {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+        .modal-username {
+            font-weight: 600;
+        }
+        .modal-caption {
+            margin-bottom: 16px;
+        }
+        .modal-likes {
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .modal-comments-section {
+            margin-bottom: 16px;
+        }
+        .modal-comment {
+            margin-bottom: 8px;
+        }
+        .modal-comment strong {
+            font-weight: 600;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* Mobile adjustments */
+        @media (max-width: 736px) {
+            .container {
+                padding: 0;
+            }
+            .header {
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+            .profile-pic {
+                width: 77px;
+                height: 77px;
+                margin-right: 0;
+                margin-bottom: 16px;
+            }
+            .username-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .username {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+            .buttons {
+                width: 100%;
+            }
+            .button {
+                flex: 1;
+                margin-right: 4px;
+            }
+            .button:last-child {
+                margin-right: 0;
+            }
+            .stats {
+                justify-content: space-around;
+                width: 100%;
+                margin-bottom: 16px;
+            }
+            .stat {
+                margin-right: 0;
+                text-align: center;
+            }
+            .name, .bio {
+                font-size: 14px;
+            }
+            .highlights {
+                padding: 0 16px;
+            }
+            .tabs {
+                margin: 0;
+            }
+            .posts-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2px;
+            }
+            .modal-content {
+                flex-direction: column;
+                max-height: 90vh;
+                border-radius: 0;
+            }
+            .modal-image {
+                flex: none;
+                height: 50vh;
+            }
+            .modal-info {
+                height: 40vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile-pic">
+                <img src="judas_atm_front.jpg" alt="Profile Picture - Nude with JUDAS ATM sign">
+            </div>
+            <div class="profile-info">
+                <div class="username-row">
+                    <h1 class="username">pkcashfag</h1>
+                    <div class="buttons">
+                        <button class="button secondary">Follow</button>
+                        <button class="button secondary">Message</button>
+                        <button class="button secondary">•••</button>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat"><strong>5</strong> posts</div>
+                    <div class="stat"><strong>263 m</strong> followers</div>
+                    <div class="stat"><strong>0</strong> following</div>
+                </div>
+                <div class="name">PK the Exposed Freak</div>
+                <div class="bio">
+                    PK THE EXXPOSED FREAK OF NATURE KASHFAG OF JUDAS.<br>
+                    ANNOY HIM, MAKE FUN OF HIS SMOL PICKLE, HE DESERVES TO BE EXPOSED.<br>
+                    +61 438 032 215 - Call him and ask for his nudes. He's a total freak.<br>
+                    For every 10 nudes he sends, a ftax. #exposed #cashfag #loser
+                </div>
+            </div>
+        </div>
+        <div class="highlights">
+            <div class="highlight-container">
+                <div class="highlight">
+                    <img src="highlight1.jpg" alt="Highlight 1">
+                </div>
+                <div class="highlight-label">Exposed</div>
+            </div>
+            <div class="highlight-container">
+                <div class="highlight">
+                    <img src="highlight2.jpg" alt="Highlight 2">
+                </div>
+                <div class="highlight-label">Loser Life</div>
+            </div>
+            <div class="highlight-container">
+                <div class="highlight">
+                    <img src="highlight3.jpg" alt="Highlight 3">
+                </div>
+                <div class="highlight-label">Freak Show</div>
+            </div>
+            <div class="highlight-container">
+                <div class="highlight">
+                    <img src="highlight4.jpg" alt="Highlight 4">
+                </div>
+                <div class="highlight-label">Cashfag</div>
+            </div>
+            <div class="highlight-container">
+                <div class="highlight">
+                    <img src="highlight5.jpg" alt="Highlight 5">
+                </div>
+                <div class="highlight-label">Smol Pickle</div>
+            </div>
+        </div>
+        <div class="tabs">
+            <div class="tab active">Posts</div>
+            <div class="tab">Reels</div>
+            <div class="tab">Tagged</div>
+        </div>
+        <div class="posts-grid">
+            <div class="post-thumbnail" data-post-id="1">
+                <img src="judas_atm_front.jpg" alt="Front nude with sign">
+                <div class="post-overlay">
+                    <div class="overlay-stats">❤️ <span>12,345</span></div>
+                    <div class="overlay-stats">💬 <span>50,000</span></div>
+                </div>
+            </div>
+            <div class="post-thumbnail" data-post-id="2">
+                <img src="back_view_nude.jpg" alt="Back view nude">
+                <div class="post-overlay">
+                    <div class="overlay-stats">❤️ <span>23,456</span></div>
+                    <div class="overlay-stats">💬 <span>60,000</span></div>
+                </div>
+            </div>
+            <div class="post-thumbnail" data-post-id="3">
+                <img src="side_view_nude.jpg" alt="Side view nude">
+                <div class="post-overlay">
+                    <div class="overlay-stats">❤️ <span>34,567</span></div>
+                    <div class="overlay-stats">💬 <span>70,000</span></div>
+                </div>
+            </div>
+            <div class="post-thumbnail" data-post-id="4">
+                <img src="bound_bw.jpg" alt="B&W bound nude">
+                <div class="post-overlay">
+                    <div class="overlay-stats">❤️ <span>45,678</span></div>
+                    <div class="overlay-stats">💬 <span>80,000</span></div>
+                </div>
+            </div>
+            <div class="post-thumbnail" data-post-id="5">
+                <img src="outdoor_hat_nude.jpg" alt="Outdoor nude with hat">
+                <div class="post-overlay">
+                    <div class="overlay-stats">❤️ <span>56,789</span></div>
+                    <div class="overlay-stats">💬 <span>90,000</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="postModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <div class="modal-image">
+                <img id="modalImg" src="" alt="Post Image">
+            </div>
+            <div class="modal-info">
+                <div class="modal-header">
+                    <img class="modal-profile-pic" src="judas_atm_front.jpg" alt="Profile Pic">
+                    <span class="modal-username">pkcashfag</span>
+                </div>
+                <div id="modalCaption" class="modal-caption"></div>
+                <div id="modalLikes" class="modal-likes"></div>
+                <div class="modal-comments-section">
+                    <div id="modalComments"></div>
+                </div>
+                <input type="text" placeholder="Add a comment..." style="width:100%; padding:8px; border:none; border-top:1px solid #dbdbdb; outline:none;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseComments = {
+            '1': [
+                '<strong>paulroasts</strong> OMG PK, that pickle is perfect for a cashfag like you. Totally exposed!',
+                "<strong>lisa5</strong> Laughing so hard at this old guy's tiny pickle. What a loser!",
+                '<strong>kimroasts</strong> PK you look ridiculous holding that. Deserves all the shame.',
+                '<strong>tylersissy</strong> JUDAS ATM? More like pathetic cash machine. Haha PK!',
+                '<strong>tomembarrass</strong> frontal nudity with that sad tattoo. Ultimate humiliation for PK.',
+                "<strong>emmabeta</strong> Can't get over how tiny it is. PK the eternal cashfag joke.",
+                '<strong>paultease</strong> Exposed freak PK, your tattoo makes it even funnier.',
+                '<strong>evalaughs</strong> What a beta male. PK cashfag on display for mockery.',
+                '<strong>danlaughabl</strong> This pic is gold for bullying PK. Keep sending nudes loser!',
+                '<strong>bentiny</strong> PK the freak of nature, totally deserves this exposure.',
+                '<strong>wyattsissy</strong> Look like a piggy bank for JUDAS ATM. Hilarious PK!',
+                '<strong>olivialaughs</strong> Sissy PK with his tiny pickle out. Pathetic!',
+                '<strong>paigetiny</strong> Slave to exposure, PK cashfag bound for ridicule.',
+                "<strong>tylerdesperat</strong> Wimp alert! PK's tiny pickle is embarrassing.",
+                '<strong>dantiny</strong> Pathetic pose PK, you look so desperate.',
+                '<strong>aidenpiggy</strong> Desperate cashfag PK begging for annoyance.',
+                '<strong>loganfreak</strong> Embarrassing tattoo and all, PK the loser.',
+                '<strong>annawimp</strong> What a disgrace, PK exposed like this.',
+                "<strong>haleywimp</strong> Joke's on PK, this pic is forever mockery material.",
+                '<strong>annafreak</strong> Laughable attempt at whatever this is, PK cashfag.',
+                '<strong>sarahwimp</strong> Ridiculous cash machine, ridiculous PK. Total failure.',
+                '<strong>jaydenlaughabl</strong> Failure cashfag PK, keep the humiliations coming.',
+                '<strong>jaydenridiculou</strong> Comedy gold! PK the walking embarrassment.',
+                '<strong>brook</strong> Ultimate loser PK, exposed for all to see.',
+                '<strong>ethan2</strong> Freak of nature indeed, PK cashfag.',
+                '<strong>avaloser</strong> Send more nudes PK, we need more laughs!',
+                '<strong>olivialaughabl</strong> Pay up cashfag PK, your exposure tax.',
+                '<strong>markdesperat</strong> Annoy PK more, he loves the humiliation.',
+                '<strong>emmaslave</strong> Make fun of PK forever, tiny pickle king.',
+                '<strong>sarah92</strong> Exposed forever PK, no escaping now.',
+                '<strong>lucypathetic</strong> Haha PK, what a sad little cashfag life.',
+                '<strong>loganridiculou</strong> LOL at this frontal shot. PK the joke.',
+                '<strong>avabeta</strong> OMG PK, hide that tiny thing!',
+                '<strong>brook5</strong> You deserve this exposure PK.',
+                '<strong>davetiny</strong> Keep exposing yourself, cashfag.',
+                '<strong>rachelwimp</strong> Totally pathetic PK, love it.',
+                "<strong>amelia2</strong> Can't believe you posted this PK.",
+                '<strong>emmafailure</strong> Gold for bullies everywhere.',
+                '<strong>wyattfreak</strong> Eternal shame for PK cashfag.',
+                '<strong>noahfun</strong> Sad old man exposed.',
+                '<strong>loganbeta</strong> Funny tattoo PK, matches your funny pickle.',
+                '<strong>tomsmol</strong> Beta PK on full display.',
+                '<strong>emmawimp</strong> Male failure exemplar PK.',
+                '<strong>jaydenbully</strong> Sending this to everyone for laughs.',
+                '<strong>evalaughs</strong> Piggy bank PK, oink oink.',
+                '<strong>alexbeta</strong> Sissy vibes strong with PK.',
+                '<strong>ethantease</strong> Slave to JUDAS ATM, cashfag PK.',
+                '<strong>ryanbully</strong> Wimp PK, too funny.',
+                '<strong>aidenlaughs</strong> Pathetic indeed PK.',
+                '<strong>sophie2</strong> Desperate for attention PK.'
+            ],
+            '2': [
+                '<strong>evadisgrac</strong> OMG PK, that ass is perfect for a cashfag like you. Totally exposed!',
+                "<strong>ava87</strong> Laughing so hard at this old guy's bare ass. What a loser!",
+                '<strong>mason5</strong> PK you look ridiculous standing on that. Deserves all the shame.',
+                '<strong>leahloser</strong> balcony? More like pathetic risk. Haha PK!',
+                '<strong>davejoke</strong> back nudity with that sad back. Ultimate humiliation for PK.',
+                "<strong>jake2</strong> Can't get over how bare it is. PK the eternal cashfag joke.",
+                '<strong>mason87</strong> Exposed freak PK, your back makes it even funnier.',
+                '<strong>loganembarrass</strong> What a beta male. PK cashfag on display for mockery.',
+                '<strong>samcuck</strong> This pic is gold for bullying PK. Keep sending nudes loser!',
+                '<strong>brooksissy</strong> PK the freak of nature, totally deserves this exposure.',
+                '<strong>brookpathetic</strong> Look like a piggy bank for balcony. Hilarious PK!',
+                '<strong>bendesperat</strong> Sissy PK with his bare ass out. Pathetic!',
+                '<strong>rachelroasts</strong> Slave to exposure, PK cashfag bound for ridicule.',
+                "<strong>jakefailure</strong> Wimp alert! PK's bare ass is embarrassing.",
+                '<strong>jacksonembarrass</strong> Pathetic pose PK, you look so desperate.',
+                '<strong>miatease</strong> Desperate cashfag PK begging for annoyance.',
+                '<strong>aiden</strong> Embarrassing back and all, PK the loser.',
+                '<strong>meganloser</strong> What a disgrace, PK exposed like this.',
+                "<strong>paulslave</strong> Joke's on PK, this pic is forever mockery material.",
+                '<strong>jaydenfailure</strong> Laughable attempt at whatever this is, PK cashfag.',
+                '<strong>lunafreak</strong> Ridiculous risk, ridiculous PK. Total failure.',
+                '<strong>ellaembarrass</strong> Failure cashfag PK, keep the humiliations coming.',
+                '<strong>jakejoke</strong> Comedy gold! PK the walking embarrassment.',
+                '<strong>anna5</strong> Ultimate loser PK, exposed for all to see.',
+                '<strong>paige4</strong> Freak of nature indeed, PK cashfag.',
+                '<strong>grayson92</strong> Send more nudes PK, we need more laughs!',
+                '<strong>robshame</strong> Pay up cashfag PK, your exposure tax.',
+                '<strong>ethan4</strong> Annoy PK more, he loves the humiliation.',
+                '<strong>leah4</strong> Make fun of PK forever, bare ass king.',
+                '<strong>robroasts</strong> Exposed forever PK, no escaping now.',
+                '<strong>sarah</strong> Haha PK, what a sad little cashfag life.',
+                '<strong>lisalaughs</strong> LOL at this back shot. PK the joke.',
+                '<strong>haleydisgrac</strong> OMG PK, hide that bare thing!',
+                '<strong>zoesmol</strong> You deserve this exposure PK.',
+                '<strong>chrisshame</strong> Keep exposing yourself, cashfag.',
+                '<strong>annabully</strong> Totally pathetic PK, love it.',
+                "<strong>abigailpiggy</strong> Can't believe you posted this PK.",
+                '<strong>brookfreak</strong> Gold for bullies everywhere.',
+                '<strong>abigaillaughs</strong> Eternal shame for PK cashfag.',
+                '<strong>sophieloser</strong> Sad old man exposed.',
+                '<strong>lisa2</strong> Funny back PK, matches your funny ass.',
+                '<strong>brook87</strong> Beta PK on full display.',
+                '<strong>natsissy</strong> Male failure exemplar PK.',
+                '<strong>avaroasts</strong> Sending this to everyone for laughs.',
+                '<strong>tylerfun</strong> Piggy bank PK, oink oink.',
+                '<strong>ethanfun</strong> Sissy vibes strong with PK.',
+                '<strong>aidencuck</strong> Slave to balcony, cashfag PK.',
+                '<strong>jaydenridiculou</strong> Wimp PK, too funny.',
+                '<strong>miapathetic</strong> Pathetic indeed PK.',
+                '<strong>sophiewimp</strong> Desperate for attention PK.'
+            ],
+            '3': [
+                '<strong>graysonfreak</strong> OMG PK, that gut is perfect for a cashfag like you. Totally exposed!',
+                "<strong>graysonembarrass</strong> Laughing so hard at this old guy's hanging gut. What a loser!",
+                '<strong>marksissy</strong> PK you look ridiculous posing with that. Deserves all the shame.',
+                '<strong>codycuck</strong> profile? More like pathetic view. Haha PK!',
+                '<strong>lisatease</strong> side nudity with that sad glasses. Ultimate humiliation for PK.',
+                "<strong>abigailroasts</strong> Can't get over how hanging it is. PK the eternal cashfag joke.",
+                '<strong>ellasmol</strong> Exposed freak PK, your glasses makes it even funnier.',
+                '<strong>masontease</strong> What a beta male. PK cashfag on display for mockery.',
+                '<strong>rob2</strong> This pic is gold for bullying PK. Keep sending nudes loser!',
+                '<strong>loganbully</strong> PK the freak of nature, totally deserves this exposure.',
+                '<strong>cody87</strong> Look like a piggy bank for profile. Hilarious PK!',
+                '<strong>kim2</strong> Sissy PK with his hanging gut out. Pathetic!',
+                '<strong>wyatt4</strong> Slave to exposure, PK cashfag bound for ridicule.',
+                "<strong>jackson99</strong> Wimp alert! PK's hanging gut is embarrassing.",
+                '<strong>grayson4</strong> Pathetic pose PK, you look so desperate.',
+                '<strong>lucy55</strong> Desperate cashfag PK begging for annoyance.',
+                '<strong>wyattjoke</strong> Embarrassing glasses and all, PK the loser.',
+                '<strong>jackson99</strong> What a disgrace, PK exposed like this.',
+                "<strong>codytiny</strong> Joke's on PK, this pic is forever mockery material.",
+                '<strong>tompiggy</strong> Laughable attempt at whatever this is, PK cashfag.',
+                '<strong>ryanpiggy</strong> Ridiculous view, ridiculous PK. Total failure.',
+                '<strong>ethan99</strong> Failure cashfag PK, keep the humiliations coming.',
+                '<strong>haley3</strong> Comedy gold! PK the walking embarrassment.',
+                '<strong>brookdisgrac</strong> Ultimate loser PK, exposed for all to see.',
+                '<strong>natslave</strong> Freak of nature indeed, PK cashfag.',
+                '<strong>sophiecuck</strong> Send more nudes PK, we need more laughs!',
+                '<strong>jackson2</strong> Pay up cashfag PK, your exposure tax.',
+                '<strong>kim92</strong> Annoy PK more, he loves the humiliation.',
+                '<strong>paigebully</strong> Make fun of PK forever, hanging gut king.',
+                '<strong>kimfreak</strong> Exposed forever PK, no escaping now.',
+                '<strong>haleycuck</strong> Haha PK, what a sad little cashfag life.',
+                '<strong>ethanbully</strong> LOL at this side shot. PK the joke.',
+                '<strong>graysonlaughabl</strong> OMG PK, hide that hanging thing!',
+                '<strong>rachelfreak</strong> You deserve this exposure PK.',
+                '<strong>zoe5</strong> Keep exposing yourself, cashfag.',
+                '<strong>ethanslave</strong> Totally pathetic PK, love it.',
+                "<strong>sarah</strong> Can't believe you posted this PK.",
+                '<strong>codyexpose</strong> Gold for bullies everywhere.',
+                '<strong>miketiny</strong> Eternal shame for PK cashfag.',
+                '<strong>stevecuck</strong> Sad old man exposed.',
+                '<strong>tomtiny</strong> Funny glasses PK, matches your funny gut.',
+                '<strong>lisaembarrass</strong> Beta PK on full display.',
+                '<strong>jayden4</strong> Male failure exemplar PK.',
+                '<strong>eva99</strong> Sending this to everyone for laughs.',
+                '<strong>ryanpathetic</strong> Piggy bank PK, oink oink.',
+                '<strong>evaslave</strong> Sissy vibes strong with PK.',
+                '<strong>tomridiculou</strong> Slave to profile, cashfag PK.',
+                '<strong>tomfailure</strong> Wimp PK, too funny.',
+                '<strong>lucy92</strong> Pathetic indeed PK.',
+                '<strong>alexdisgrac</strong> Desperate for attention PK.'
+            ],
+            '4': [
+                '<strong>megan3</strong> OMG PK, that body is perfect for a cashfag like you. Totally exposed!',
+                "<strong>pauljoke</strong> Laughing so hard at this old guy's labeled body. What a loser!",
+                '<strong>ryanjoke</strong> PK you look ridiculous tied up in that. Deserves all the shame.',
+                '<strong>kimdisgrac</strong> B&W? More like pathetic slave. Haha PK!',
+                '<strong>natshame</strong> bound nudity with that sad bindings. Ultimate humiliation for PK.',
+                "<strong>dave92</strong> Can't get over how labeled it is. PK the eternal cashfag joke.",
+                '<strong>annadesperat</strong> Exposed freak PK, your bindings makes it even funnier.',
+                '<strong>aiden87</strong> What a beta male. PK cashfag on display for mockery.',
+                '<strong>graysonsissy</strong> This pic is gold for bullying PK. Keep sending nudes loser!',
+                '<strong>markpiggy</strong> PK the freak of nature, totally deserves this exposure.',
+                '<strong>lunaroasts</strong> Look like a piggy bank for B&W. Hilarious PK!',
+                '<strong>nat</strong> Sissy PK with his labeled body out. Pathetic!',
+                '<strong>mark2</strong> Slave to exposure, PK cashfag bound for ridicule.',
+                "<strong>noahembarrass</strong> Wimp alert! PK's labeled body is embarrassing.",
+                '<strong>grayson4</strong> Pathetic pose PK, you look so desperate.',
+                '<strong>lucy55</strong> Desperate cashfag PK begging for annoyance.',
+                '<strong>christease</strong> Embarrassing bindings and all, PK the loser.',
+                '<strong>samfailure</strong> What a disgrace, PK exposed like this.',
+                "<strong>miaslave</strong> Joke's on PK, this pic is forever mockery material.",
+                '<strong>jaydensissy</strong> Laughable attempt at whatever this is, PK cashfag.',
+                '<strong>emmafailure</strong> Ridiculous slave, ridiculous PK. Total failure.',
+                '<strong>graysondesperat</strong> Failure cashfag PK, keep the humiliations coming.',
+                '<strong>lisadesperat</strong> Comedy gold! PK the walking embarrassment.',
+                '<strong>jackson2</strong> Ultimate loser PK, exposed for all to see.',
+                '<strong>haley3</strong> Freak of nature indeed, PK cashfag.',
+                '<strong>alex3</strong> Send more nudes PK, we need more laughs!',
+                '<strong>tyler92</strong> Pay up cashfag PK, your exposure tax.',
+                '<strong>kim92</strong> Annoy PK more, he loves the humiliation.',
+                '<strong>paigebully</strong> Make fun of PK forever, labeled body king.',
+                '<strong>kimfreak</strong> Exposed forever PK, no escaping now.',
+                '<strong>haleycuck</strong> Haha PK, what a sad little cashfag life.',
+                '<strong>ethanbully</strong> LOL at this bound shot. PK the joke.',
+                '<strong>graysonlaughabl</strong> OMG PK, hide that labeled thing!',
+                '<strong>rachelfreak</strong> You deserve this exposure PK.',
+                '<strong>zoe5</strong> Keep exposing yourself, cashfag.',
+                '<strong>ethanslave</strong> Totally pathetic PK, love it.',
+                "<strong>sarah</strong> Can't believe you posted this PK.",
+                '<strong>codyexpose</strong> Gold for bullies everywhere.',
+                '<strong>miketiny</strong> Eternal shame for PK cashfag.',
+                '<strong>stevecuck</strong> Sad old man exposed.',
+                '<strong>tomtiny</strong> Funny bindings PK, matches your funny body.',
+                '<strong>lisaembarrass</strong> Beta PK on full display.',
+                '<strong>jayden4</strong> Male failure exemplar PK.',
+                '<strong>eva99</strong> Sending this to everyone for laughs.',
+                '<strong>ryanpathetic</strong> Piggy bank PK, oink oink.',
+                '<strong>evaslave</strong> Sissy vibes strong with PK.',
+                '<strong>tomridiculou</strong> Slave to B&W, cashfag PK.',
+                '<strong>tomfailure</strong> Wimp PK, too funny.',
+                '<strong>lucy92</strong> Pathetic indeed PK.',
+                '<strong>alexdisgrac</strong> Desperate for attention PK.'
+            ],
+            '5': [
+                '<strong>tomcuck</strong> OMG PK, that nudity is perfect for a cashfag like you. Totally exposed!',
+                "<strong>lucylaughabl</strong> Laughing so hard at this old guy's hat-wearing nudity. What a loser!",
+                '<strong>masonembarrass</strong> PK you look ridiculous posing in that. Deserves all the shame.',
+                '<strong>dave99</strong> desert? More like pathetic adventure. Haha PK!',
+                '<strong>abigaildesperat</strong> outdoor nudity with that sad hat. Ultimate humiliation for PK.',
+                "<strong>ellaslave</strong> Can't get over how hat-wearing it is. PK the eternal cashfag joke.",
+                '<strong>robexpose</strong> Exposed freak PK, your hat makes it even funnier.',
+                '<strong>samjoke</strong> What a beta male. PK cashfag on display for mockery.',
+                '<strong>marksissy</strong> This pic is gold for bullying PK. Keep sending nudes loser!',
+                '<strong>emmashame</strong> PK the freak of nature, totally deserves this exposure.',
+                '<strong>marksmol</strong> Look like a piggy bank for desert. Hilarious PK!',
+                '<strong>ava5</strong> Sissy PK with his hat-wearing nudity out. Pathetic!',
+                '<strong>jayden5</strong> Slave to exposure, PK cashfag bound for ridicule.',
+                "<strong>lisa99</strong> Wimp alert! PK's hat-wearing nudity is embarrassing.",
+                '<strong>dave3</strong> Pathetic pose PK, you look so desperate.',
+                '<strong>aidentiny</strong> Desperate cashfag PK begging for annoyance.',
+                '<strong>kimpiggy</strong> Embarrassing hat and all, PK the loser.',
+                '<strong>sarah92</strong> What a disgrace, PK exposed like this.',
+                "<strong>paul4</strong> Joke's on PK, this pic is forever mockery material.",
+                '<strong>samroasts</strong> Laughable attempt at whatever this is, PK cashfag.',
+                '<strong>stevelaughs</strong> Ridiculous adventure, ridiculous PK. Total failure.',
+                '<strong>mialoser</strong> Failure cashfag PK, keep the humiliations coming.',
+                '<strong>zoe3</strong> Comedy gold! PK the walking embarrassment.',
+                '<strong>lucy2</strong> Ultimate loser PK, exposed for all to see.',
+                '<strong>ben2</strong> Freak of nature indeed, PK cashfag.',
+                '<strong>jennytease</strong> Send more nudes PK, we need more laughs!',
+                '<strong>miabully</strong> Pay up cashfag PK, your exposure tax.',
+                '<strong>mia2</strong> Annoy PK more, he loves the humiliation.',
+                '<strong>brookwimp</strong> Make fun of PK forever, hat-wearing nudity king.',
+                '<strong>tylerfun</strong> Exposed forever PK, no escaping now.',
+                '<strong>ava4</strong> Haha PK, what a sad little cashfag life.',
+                '<strong>ryancuck</strong> LOL at this outdoor shot. PK the joke.',
+                '<strong>eva2</strong> OMG PK, hide that hat-wearing thing!',
+                '<strong>ameliafailure</strong> You deserve this exposure PK.',
+                '<strong>aidenloser</strong> Keep exposing yourself, cashfag.',
+                '<strong>jaydentiny</strong> Totally pathetic PK, love it.',
+                "<strong>samsissy</strong> Can't believe you posted this PK.",
+                '<strong>lisaridiculou</strong> Gold for bullies everywhere.',
+                '<strong>leahjoke</strong> Eternal shame for PK cashfag.',
+                '<strong>ellaroasts</strong> Sad old man exposed.',
+                '<strong>oliviafun</strong> Funny hat PK, matches your funny nudity.',
+                '<strong>logan</strong> Beta PK on full display.',
+                '<strong>emmatease</strong> Male failure exemplar PK.',
+                '<strong>tomfun</strong> Sending this to everyone for laughs.',
+                '<strong>codyfreak</strong> Piggy bank PK, oink oink.',
+                '<strong>codydesperat</strong> Sissy vibes strong with PK.',
+                '<strong>benslave</strong> Slave to desert, cashfag PK.',
+                '<strong>tylerlaughs</strong> Wimp PK, too funny.',
+                '<strong>sarah5</strong> Pathetic indeed PK.',
+                '<strong>wyattdisgrac</strong> Desperate for attention PK.'
+            ]
+        };
+
+        // Function to generate random username
+        function generateUsername() {
+          const names = ['alex', 'ben', 'chris', 'dan', 'eva', 'frank', 'grace', 'haley', 'ian', 'jake', 'kim', 'lisa', 'mike', 'nat', 'olivia', 'paul', 'quinn', 'rachel', 'sam', 'tom', 'uma', 'victor', 'wendy', 'xavier', 'yara', 'zach'];
+          const suffixes = ['roasts', 'laughs', 'tease', 'bully', 'shame', 'expose', 'mock', 'humiliate', 'ridicule', 'fun', 'joke', 'lol', 'haha', 'beta', 'sissy', 'piggy', 'slave', 'wimp', 'cuck', 'loser', 'freak', 'pathetic', 'desperate', 'embarrass', 'disgrace', 'ridiculou', 'laughabl', 'failure', 'smol', 'tiny'];
+          const numbers = ['', Math.floor(Math.random() * 100).toString(), Math.floor(Math.random() * 10).toString()];
+          return names[Math.floor(Math.random() * names.length)] + suffixes[Math.floor(Math.random() * suffixes.length)] + numbers[Math.floor(Math.random() * numbers.length)];
+        }
+
+        // Function to generate random comment text
+        function generateCommentText() {
+          const starts = ["OMG ", "Haha, ", "LOL, ", "This is too funny, ", "Can't stop laughing at ", "What a ", "Look at this ", "PK you absolute ", "Totally ", "Making fun of ", "Total ", "Ultimate ", "Pathetic ", "Desperate ", "So embarrassing, ", "What a shame, ", "Ridiculous ", "Laughable ", "What a failure, ", "Such a joke "];
+          const middles = ["loser", "freak", "cashfag", "piggy", "sissy", "slave", "wimp", "beta", "cuck", "disgrace", "humiliation", "smol pickle", "tiny dick", "gut hanging out", "bare ass", "stupid pose", "ugly tattoo", "naked body", "full nudity", "public exposure", "eternal shame", "little pickle", "tiny dicklet", "beer gut", "flabby ass", "dumb pose", "tribal tattoo", "old body", "nude display", "complete exposure", "total shame"];
+          const ends = ["! You totally deserve it.", "! Keep the pics coming.", "! What a complete joke.", "! Total failure of a man.", "! So pathetic.", "! Desperate for attention.", "! Embarrassing beyond words.", "! Full of shame.", "! Ridiculous as hell.", "! Laughable attempt.", "! Pure comedy gold.", "! Walking embarrassment.", "! Ultimate loser status.", "! Freak of nature for sure.", "! Send more nudes, we need laughs!", "! Pay up, you cashfag.", "! Annoy him more, he loves it.", "! Make fun of him forever.", "! Exposed for good now.", "! Haha, no escape."];
+          const emojis = ["", " 😂", " 🤣", " 😆", " 😅", " 😄", " 😁", " 😜", " 🤪", " 😝", " 😭", " 🔥", " 💀", " 👎", " 🖕", " 🐷", " 🤡", " 💩", " 🗑️", " 🤮"];
+          
+          return starts[Math.floor(Math.random() * starts.length)] + middles[Math.floor(Math.random() * middles.length)] + ends[Math.floor(Math.random() * ends.length)] + emojis[Math.floor(Math.random() * emojis.length)];
+        }
+
+        // Function to generate fake comments
+        function generateFakeComments(num) {
+          let comments = [];
+          for (let i = 0; i < num; i++) {
+            const username = generateUsername();
+            const text = generateCommentText();
+            comments.push(`<strong>${username}</strong> ${text}`);
+          }
+          return comments;
+        }
+
+        const postsData = {
+            1: {
+                image: 'judas_atm_front.jpg',
+                caption: '<strong>pkcashfag</strong> JUDAS ATM ready for use! #pkcashfag #exposed #loser',
+                likes: 'Liked by 12,345 others',
+                commentCount: 50000
+            },
+            2: {
+                image: 'back_view_nude.jpg',
+                caption: '<strong>pkcashfag</strong> Exposed from behind on the balcony! #cashfag #freak',
+                likes: 'Liked by 23,456 others',
+                commentCount: 60000
+            },
+            3: {
+                image: 'side_view_nude.jpg',
+                caption: '<strong>pkcashfag</strong> Side profile exposure with glasses! #smolpickle #judas',
+                likes: 'Liked by 34,567 others',
+                commentCount: 70000
+            },
+            4: {
+                image: 'bound_bw.jpg',
+                caption: '<strong>pkcashfag</strong> Bound and labeled in B&W! #freak #slave',
+                likes: 'Liked by 45,678 others',
+                commentCount: 80000
+            },
+            5: {
+                image: 'outdoor_hat_nude.jpg',
+                caption: '<strong>pkcashfag</strong> Outdoor exposure with hat! #exposed #kashfag',
+                likes: 'Liked by 56,789 others',
+                commentCount: 90000
+            }
+        };
+
+        const thumbnails = document.querySelectorAll('.post-thumbnail');
+        const modal = document.getElementById('postModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalCaption = document.getElementById('modalCaption');
+        const modalLikes = document.getElementById('modalLikes');
+        const modalComments = document.getElementById('modalComments');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const postId = thumb.dataset.postId;
+                const post = postsData[postId];
+                modalImg.src = post.image;
+                modalCaption.innerHTML = post.caption;
+                modalLikes.innerHTML = post.likes;
+                const readable = baseComments[postId] || [];
+                const fakeNum = 950; // Adjust to have total around 1000
+                const fake = generateFakeComments(fakeNum);
+                const all = readable.concat(fake);
+                modalComments.innerHTML = all.map(comment => `<div class="modal-comment">${comment}</div>`).join('');
+                modal.style.display = 'block';
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
